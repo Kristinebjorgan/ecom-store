@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  background-color: $background-color;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  letter-spacing: 0.2em;
+  font-weight: 300;
+}
+
+main {
+  max-width: 1200px;
+  width: 100%;
+  padding: 2em;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: 10px 16px;
+  background: $secondary-color;
+  border-radius: 5px;
+  transition: 0.3s;
+
+  &:hover {
+    background: $primary-color;
+  }
+}

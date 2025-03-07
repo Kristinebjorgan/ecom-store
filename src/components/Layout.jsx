@@ -4,12 +4,12 @@ import Footer from './Footer'
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <div className="layout-container">
       <Header />
-      <main>{children}</main>
+      <main className="content">{children}</main>
       <Footer />
-    </>
+    </div>
   )
 }
 
-export default Layout;
+export default Layout

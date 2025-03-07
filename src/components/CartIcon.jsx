@@ -1,7 +1,33 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { CartContext } from '../context/CartContext' // 
 
 const CartIcon = () => {
-  return <div>🛒 Cart</div>
+  const { cartCount } = useContext(CartContext) 
+  return (
+    <Link
+      to="/cart"
+      style={{ position: 'relative', textDecoration: 'none', color: 'black' }}
+    >
+      🛒 Cart
+      {cartCount > 0 && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '-5px',
+            right: '-10px',
+            background: 'red',
+            color: 'white',
+            borderRadius: '50%',
+            padding: '4px 8px',
+            fontSize: '12px',
+          }}
+        >
+          {cartCount} {}
+        </span>
+      )}
+    </Link>
+  )
 }
 
-export default CartIcon;
+export default CartIcon
