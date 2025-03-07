@@ -32,6 +32,7 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setCart([])
     localStorage.removeItem('cart') 
+  }
 
   // Get total price of all items in the cart
   const getTotalPrice = () => {
