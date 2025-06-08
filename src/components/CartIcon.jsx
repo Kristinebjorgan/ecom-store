@@ -1,15 +1,15 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { CartContext } from '../context/CartContext' // 
+import { CartContext } from '../context/CartContext' //
 
 const CartIcon = () => {
-  const { cartCount } = useContext(CartContext) 
+  const { cartCount } = useContext(CartContext)
   return (
     <Link
       to="/cart"
-      style={{ position: 'relative', textDecoration: 'none', color: 'black' }}
+      style={{ position: 'relative', textDecoration: 'none' }}
     >
-      🛒 Cart
+      CART
       {cartCount > 0 && (
         <span
           style={{

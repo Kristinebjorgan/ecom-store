@@ -28,10 +28,10 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId))
   }
 
-  // Clear all items from the cart 
+  // Clear all items from the cart
   const clearCart = () => {
     setCart([])
-    localStorage.removeItem('cart') 
+    localStorage.removeItem('cart')
   }
 
   // Get total price of all items in the cart

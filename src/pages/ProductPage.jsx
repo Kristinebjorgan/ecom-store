@@ -5,69 +5,78 @@ import { CartContext } from '../context/CartContext'
 const ProductPage = () => {
   const { id } = useParams()
   const { addToCart } = useContext(CartContext)
+
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`https://v2.api.noroff.dev/online-shop/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Product Data:', data)
-        if (data && data.data) {
-          setProduct(data.data) 
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`https://v2.api.noroff.dev/online-shop/${id}`)
+        const data = await res.json()
+
+        if (data?.data) {
+          setProduct(data.data)
         } else {
           console.error('Unexpected API response:', data)
-          setProduct(null)
         }
-        setLoading(false)
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching product:', error)
-        setProduct(null)
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchProduct()
   }, [id])
 
   if (loading) return <h2>Loading product details...</h2>
   if (!product) return <h2>Product not found.</h2>
 
+  const { title, description, price, discountedPrice, image, reviews } = product
+  const hasDiscount = discountedPrice < price
+  const imageUrl = image?.url || 'https://via.placeholder.com/200'
+  const imageAlt = image?.alt || title
+
   return (
     <div className="product-container">
-      <h1>{product.title}</h1>
-      <img
-        src={product.image?.url || 'https://via.placeholder.com/200'} 
-        alt={product.image?.alt || product.title}
-        width="200"
-      />
-      <p>{product.description}</p>
+      <h1>{title}</h1>
+
+      <img src={imageUrl} alt={imageAlt} width="200" />
+
+      <p>{description}</p>
+
       <p>
-        {product.discountedPrice < product.price ? (
+        {hasDiscount ? (
           <>
-            <span style={{ textDecoration: 'line-through' }}>
-              ${product.price}
-            </span>{' '}
-            <strong>${product.discountedPrice}</strong>
+            <span style={{ textDecoration: 'line-through' }}>${price}</span>{' '}
+            <strong>${discountedPrice}</strong>
           </>
         ) : (
-          <strong>${product.price}</strong>
+          <strong>${price}</strong>
         )}
       </p>
+
       <button onClick={() => addToCart(product)}>Add to Cart</button>
 
-      <h3>Reviews:</h3>
-      {Array.isArray(product.reviews) && product.reviews.length > 0 ? (
-        <ul>
-          {product.reviews.map((review, index) => (
-            <li key={index}>
-              {review.description} - ⭐ {review.rating}/5
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No reviews yet. Leave yours</p>
-      )}
-      <br />
-      <Link to="/">← Back</Link>
+      <section className="reviews">
+        <h3>Reviews</h3>
+        {Array.isArray(reviews) && reviews.length > 0 ? (
+          <ul>
+            {reviews.map((review) => (
+              <li key={review.id || `${review.rating}-${review.description}`}>
+                {review.description} – ⭐ {review.rating}/5
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No reviews yet. Leave yours.</p>
+        )}
+      </section>
+
+      <Link to="/" className="back-link">
+        ← Back
+      </Link>
     </div>
   )
 }

@@ -1,71 +1,72 @@
 import React, { useEffect, useState } from 'react'
-import ProductCard from '../components/ProductCard'
 import { Link } from 'react-router-dom'
+import ProductCard from '../components/ProductCard'
 
+/**
+ * Homepage of the store with product listing and search/autocomplete.
+ */
 const HomePage = () => {
   const [products, setProducts] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [suggestions, setSuggestions] = useState([]) 
+  const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('https://v2.api.noroff.dev/online-shop')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('API Response:', data)
-        if (data && Array.isArray(data.data)) {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('https://v2.api.noroff.dev/online-shop')
+        const data = await res.json()
+
+        if (Array.isArray(data?.data)) {
           setProducts(data.data)
         } else {
-          console.error('Unexpected API response format:', data)
-          setProducts([])
+          console.error('Unexpected API format:', data)
         }
+      } catch (error) {
+        console.error('Failed to fetch products:', error)
+      } finally {
         setLoading(false)
-      })
-      .catch((error) => {
-        console.error('Error fetching products:', error)
-        setProducts([])
-        setLoading(false)
-      })
+      }
+    }
+
+    fetchProducts()
   }, [])
 
-  // Auto-complete 
   useEffect(() => {
-    if (searchQuery.length > 0) {
-      const filtered = products.filter((product) =>
-        product.title.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      setSuggestions(filtered.slice(0, 5)) 
+    if (searchQuery.trim()) {
+      const lowerQuery = searchQuery.toLowerCase()
+      const matched = products
+        .filter((p) => p.title.toLowerCase().includes(lowerQuery))
+        .slice(0, 5)
+
+      setSuggestions(matched)
     } else {
-      setSuggestions([]) 
+      setSuggestions([])
     }
   }, [searchQuery, products])
 
-  // Filtered products 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = products.filter((p) =>
+    p.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
-
-  if (loading) return <h2>Loading products...</h2>
 
   return (
     <div className="h1-wrapper">
-    <div>
-      <h1>OneStopShop</h1>
-      <h3>All you need in one place</h3>
+      <div>
+        <h1>OneStopShop</h1>
+        <h3>All you need in one place</h3>
       </div>
 
-      {/*  Search Input */}
       <div className="search-container">
         <input
           type="text"
-          placeholder="search products"
+          placeholder="Search products"
           className="search-bar"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          aria-label="Search products"
         />
       </div>
 
-      {/* Auto-Complete Dropdown */}
       {suggestions.length > 0 && (
         <ul className="autocomplete-dropdown">
           {suggestions.map((product) => (
@@ -76,16 +77,19 @@ const HomePage = () => {
         </ul>
       )}
 
-      {/* Display Filtered Products */}
-      <div className="product-list">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
-        ) : (
-          <p>No products found</p>
-        )}
-      </div>
+      {loading ? (
+        <p>Loading products...</p>
+      ) : (
+        <div className="product-list">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <p>No products found</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

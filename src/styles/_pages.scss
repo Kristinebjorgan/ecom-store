@@ -8,18 +8,22 @@
 
 .h1-wrapper {
   text-align: center;
-  color: $text-color;
+  padding: 2rem 1rem;
 
   h1 {
     font-size: 2.5rem;
-    margin-bottom: 0.3em;
+    margin-bottom: 0.2em;
+    color: $text-color;
   }
 
   h3 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: normal;
+    margin-top: 0;
+    color: darken($text-color, 10%);
   }
 }
+
 
 // Contact Page
 .contact-container {
